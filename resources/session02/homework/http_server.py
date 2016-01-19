@@ -1,14 +1,16 @@
 import socket
 import sys
+import os
+import mimetypes
 
 
 def response_ok(body=b"this is a pretty minimal response", mimetype=b"text/plain"):
     """returns a basic HTTP response"""
     resp = []
     resp.append(b"HTTP/1.1 200 OK")
-    resp.append(b"Content-Type: text/plain")
+    resp.append(b"Content-Type: " + mimetype)
     resp.append(b"")
-    resp.append(b"this is a pretty minimal response")
+    resp.append(body)
     return b"\r\n".join(resp)
 
 
@@ -22,7 +24,10 @@ def response_method_not_allowed():
 
 def response_not_found():
     """returns a 404 Not Found response"""
-    return b""
+    resp = []
+    resp.append("HTTP/1.1 404 Not Found")
+    resp.append("")
+    return "\r\n".join(resp).encode('utf8')
 
 
 def parse_request(request):
@@ -35,7 +40,19 @@ def parse_request(request):
 
 def resolve_uri(uri):
     """This method should return appropriate content and a mime type"""
-    return b"still broken", b"text/plain"
+    home = os.getcwd() + "/webroot"
+    path = home + uri
+    if os.path.isfile(path):
+        mime, encoding = mimetypes.guess_type(path)
+        with open(path, 'rb') as f:
+            content = f.read()
+    elif os.path.isdir(path):
+        mime = "text/plain" 
+        files = os.listdir(path)
+        content = "\n".join(files).encode('utf8')
+    else:
+        raise NameError
+    return content, mime.encode('utf8')
 
 
 def server(log_buffer=sys.stderr):
@@ -43,7 +60,7 @@ def server(log_buffer=sys.stderr):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     print("making a server on {0}:{1}".format(*address), file=log_buffer)
-    sock.bind(address)
+    sock.bind(address) 
     sock.listen(1)
 
     try:
