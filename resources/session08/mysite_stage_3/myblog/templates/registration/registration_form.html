@@ -6,12 +6,17 @@
 {% block content %}
 <h1>My Blog Registration form</h1>
 <form action="" method="POST">{% csrf_token %}
-    {{ form.as_p }}
-{% buttons %}
-    <button type="submit" class="btn btn-primary">
-      {% bootstrap_icon "star" %} Register Me
-    </button>
-  {% endbuttons %}
+    {% for field in form %}
+      <div class="fieldWrapper">
+        {% bootstrap_field field show_help=false%}
+      </div>
+    {% endfor %}
+    
+    {% buttons %}
+      <button type="submit" class="btn btn-primary">
+        {% bootstrap_icon "star" %} Register Me
+      </button>
+    {% endbuttons %}
 </form>
 {% endblock %}
 
