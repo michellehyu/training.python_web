@@ -1,10 +1,17 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
 {% block content %}
 <h1>My Blog Registration form</h1>
 <form action="" method="POST">{% csrf_token %}
-  {{ form.as_p }}
-  <p><input type="submit" value="Register"></p>
+    {{ form.as_p }}
+{% buttons %}
+    <button type="submit" class="btn btn-primary">
+      {% bootstrap_icon "star" %} Register Me
+    </button>
+  {% endbuttons %}
 </form>
 {% endblock %}
 
