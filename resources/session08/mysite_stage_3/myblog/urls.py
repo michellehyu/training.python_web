@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import include, url
 
 from myblog.views import stub_view
 from myblog.views import list_view
@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^posts/(?P<post_id>\d+)/$',
         detail_view,
         name='blog_detail'),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
 ]
